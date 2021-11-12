@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>exercise</title>
+
+    <script src="scatter_plot.js?2"></script>
+    <script src="bar_plot.js?2"></script>
+
+    <link rel="stylesheet" href="../styles/style.css">
+    <style>
+        .fig{
+            fill: #faf8f8;
+        }
+        table{
+            border: 1px solid #d2bcbc;
+            border-collapse: collapse;
+            width: 60vw;
+        }
+        td{
+            border: 1px solid #d2bcbc;
+            border-collapse: collapse;
+            padding: 10px;
+            width: 10vw;
+        }
+    </style>
+    <script src="../lib/d3.js"></script>
+
+</head>
+<body>
+
+<!-- https://seaborn.pydata.org/generated/seaborn.jointplot.html -->
+<!--palmer_penguin_species: https://raw.githubusercontent.com/datavizpyr/data/master/palmer_penguin_species.tsv -->
+<table>
+    <tr>
+        <td><svg width="500px" height="150px"  id="top1"></svg></td>
+        <td width="10%">&nbsp</td>
+    </tr>
+    <tr>
+        <td><svg width="500px" height="500px" viewBox="0 0 1000 1000" id="main1"></svg></td>
+        <td><svg width="150px" height="500px" id="right1"></svg></td>
+    </tr>
+</table>
+<br>
+<br>
+
+<table>
+    <tr>
+        <td><svg width="500px" height="150px"  id="top2"></svg></td>
+        <td width="10%">&nbsp</td>
+    </tr>
+    <tr>
+        <td><svg width="500px" height="500px" viewBox="0 0 1000 1000" id="main2"></svg></td>
+        <td><svg width="150px" height="500px" id="right2"></svg></td>
+    </tr>
+</table>
+<br>
+<br>
+
+<table>
+    <tr>
+        <td><svg width="500px" height="150px"  id="top3"></svg></td>
+        <td width="10%">&nbsp</td>
+    </tr>
+    <tr>
+        <td><svg width="500px" height="500px" viewBox="0 0 1000 1000" id="main3"></svg></td>
+        <td><svg width="150px" height="500px" id="right3"></svg></td>
+    </tr>
+</table>
+
+
+<!-- Initialize a select button -->
+<select id="selectButton"></select>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<!-- Color Scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+
+<script>
+    let palmer_penguin_species = "../data/palmer_penguin_species.tsv";
+    // loading data
+    d3.tsv(palmer_penguin_species).then(main)
+
+    // Subplots1
+    let fig_main1 = d3.select("#main1")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // top svg
+    let fig_top1 = d3.select("#top1")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // right svg
+    let fig_right1 = d3.select("#right1")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+
+    // Subplots2
+    let fig_main2 = d3.select("#main2")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // top svg
+    let fig_top2 = d3.select("#top2")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // right svg
+    let fig_right2 = d3.select("#right2")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+
+    // Subplots3
+    let fig_main3 = d3.select("#main3")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // top svg
+    let fig_top3 = d3.select("#top3")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+    // right svg
+    let fig_right3 = d3.select("#right3")
+        .append("g")
+        .append('rect')
+        .attr("class","fig")
+        .attr("width","100%")
+        .attr("height","100%")
+
+// append the svg object to the body of the page
+    let button_scatter1 = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", "500px")
+                .attr("height", "500px")
+                .attr("viewBox", "0 0 1000 1000")
+                .attr("id", "button_scatter1")
+
+    let button_scatter2 = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", "500px")
+                .attr("height", "500px")
+                .attr("viewBox", "0 0 1000 1000")
+                .attr("id", "button_scatter2")
+
+    let button_scatter3 = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", "500px")
+                .attr("height", "500px")
+                .attr("viewBox", "0 0 1000 1000")
+                .attr("id", "button_scatter3"); 
+            
+
+    function main(data){
+
+        var data1 = data.filter(filterCreteria1)
+
+        function filterCreteria1(d){
+            return d.species === "Adelie"
+        }
+
+        var data2 = data.filter(filterCreteria2)
+
+        function filterCreteria2(d){
+            return d.species === "Gentoo"
+        }
+
+        var data3 = data.filter(filterCreteria3)
+
+        function filterCreteria3(d){
+            return d.species === "Chinstrap"
+        }
+
+        //console.log(data1)
+
+        // fetch data from table
+
+        let culmen_length_mm1 = d3.map(data1,function (d){
+            return +d.culmen_length_mm})
+
+        let culmen_depth_mm1 = d3.map(data1,function (d){
+            return +d.culmen_depth_mm})
+
+        let flipper_length_mm1 = d3.map(data1,function (d){
+            return +d.flipper_length_mm})
+
+
+        let culmen_length_mm2 = d3.map(data2,function (d){
+            return +d.culmen_length_mm})
+
+        let culmen_depth_mm2 = d3.map(data2,function (d){
+            return +d.culmen_depth_mm})
+
+        let flipper_length_mm2 = d3.map(data2,function (d){
+            return +d.flipper_length_mm})
+
+        let culmen_length_mm3 = d3.map(data3,function (d){
+            return +d.culmen_length_mm})
+
+        let culmen_depth_mm3 = d3.map(data3,function (d){
+            return +d.culmen_depth_mm})
+
+        let flipper_length_mm3 = d3.map(data3,function (d){
+            return +d.flipper_length_mm})
+
+
+        let island = d3.map(data,function (d){
+            return d.island})
+        let island_types = new Set(island)
+
+        let island_code = d3.map(data,function (d) {
+            island = d.island
+            if (island === "Torgersen") {
+                return 0
+            } else if (island === "Biscoe") {
+                return 1
+            } else {
+                return 2
+            }
+        })
+
+        // main svg
+        scatter_plot(culmen_length_mm1,
+            culmen_depth_mm1,
+            10,
+            island_code,
+            'main1'
+            ,title='Adelie',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm");
+        //#############
+        bar_plot(culmen_length_mm1, 10,'top1')
+        h_bar_plot(culmen_depth_mm1,10,'right1')
+
+        scatter_plot(culmen_length_mm2,
+            culmen_depth_mm2,
+            10,
+            island_code,
+            'main2'
+            ,title='Gentoo',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm");
+        //#############
+        bar_plot(culmen_length_mm2, 10,'top2')
+        h_bar_plot(culmen_depth_mm2,10,'right2')
+
+        scatter_plot(culmen_length_mm3,
+            culmen_depth_mm3,
+            10,
+            island_code,
+            'main3'
+            ,title='Chinstrap',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm");
+        //#############
+        bar_plot(culmen_length_mm3, 10,'top3')
+        h_bar_plot(culmen_depth_mm3,10,'right3')
+
+
+        // List of groups (here I have one group per column)
+        var allGroup = ["Adelie", "Gentoo", "Chinstrap"]
+
+        // add the options to the button
+        d3.select("#selectButton")
+            .selectAll('myOptions')
+            .data(allGroup)
+            .enter()
+            .append('option')
+            .text(function (d) { return d; }) // text showed in the menu
+            .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+
+        function update(selectedOption) {
+
+        // Create new scatter plot with the selection
+        if (selectedOption === "Adelie")
+        { 
+            scatter_plot(culmen_length_mm1,
+            culmen_depth_mm1,
+            10,
+            island_code,
+            'button_scatter1'
+            ,title='Adelie',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm")}
+
+        else if(selectedOption === "Gentoo")
+    
+        {scatter_plot(culmen_length_mm2,
+            culmen_depth_mm2,
+            10,
+            island_code,
+            'button_scatter2'
+            ,title='Gentoo',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm")}
+        
+        else{scatter_plot(culmen_length_mm3,
+            culmen_depth_mm3,
+            10,
+            island_code,
+            'button_scatter3'
+            ,title='Chinstrap',
+            xLabel="culmen_length_mm",
+            yLabel="culmen_depth_mm")}
+
+        }  
+
+        d3.select("#selectButton").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedOption = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        update(selectedOption)
+        })
+        }
+
+
+
+
+</script>
+
+</body>
+</html>
